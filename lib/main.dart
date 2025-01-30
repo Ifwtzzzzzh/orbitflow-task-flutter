@@ -23,10 +23,25 @@ class MyApp extends StatelessWidget {
             ),
             borderRadius: BorderRadius.circular(10),
           ),
-          focusedBorder: const OutlineInputBorder(
-            borderSide: BorderSide(
+          focusedBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
               width: 3,
             ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.grey.shade300,
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: const BorderSide(
+              color: Colors.red,
+              width: 3,
+            ),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
         elevatedButtonTheme: ElevatedButtonThemeData(
