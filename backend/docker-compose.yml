@@ -10,6 +10,9 @@ services:
       - DATABSE_URL:postgresql://postgresql:test123@mydb:6432/mydb
     depends_on:
       - db
+    volumes:
+      - ./:/app
+      - /app/node_modules
 
   db:
     image: postgres:15
