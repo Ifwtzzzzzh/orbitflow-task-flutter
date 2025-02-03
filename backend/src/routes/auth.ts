@@ -4,6 +4,7 @@ import { NewUser, users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { auth, AuthRequest } from "../middleware/auth";
 
 const authRouter = Router();
 
@@ -105,8 +106,11 @@ authRouter.post("/tokenIsValid", async (req, res) => {
   }
 });
 
-authRouter.get("/", (req, res) => {
-  res.send("Hey there! from auth");
+authRouter.get("/", auth, (req: AuthRequest, res) => {
+  try {
+  } catch (e) {
+    res.status(500).json(false);
+  }
 });
 
 export default authRouter;
