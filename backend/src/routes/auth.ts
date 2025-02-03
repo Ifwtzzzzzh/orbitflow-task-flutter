@@ -1,6 +1,6 @@
 import { Request, Response, Router } from "express";
 import { db } from "../db";
-import { users } from "../db/schema";
+import { NewUser, users } from "../db/schema";
 import { eq } from "drizzle-orm";
 import bcryptjs from "bcryptjs";
 
@@ -28,7 +28,15 @@ authRouter.post(
           .json({ msg: "User with the same email already exist!" });
         return;
       }
+
       const hashedPassword = await bcryptjs.hash(password, 8);
+      const newUser: NewUser = {
+        name,
+        email,
+        password: hashedPassword,
+      };
+      const [user] = await db.insert(users).values(newUser).returning();
+      res.status(201).json(user);
     } catch (e) {
       res.status(500).json({ error: e });
     }
