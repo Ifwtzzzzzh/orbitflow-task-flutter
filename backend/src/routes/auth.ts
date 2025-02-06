@@ -5,6 +5,7 @@ import { eq } from "drizzle-orm";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { auth, AuthRequest } from "../middleware/auth";
+import { error } from "console";
 
 const authRouter = Router();
 
@@ -31,7 +32,7 @@ authRouter.post(
       if (existingUser.length) {
         res
           .status(400)
-          .json({ msg: "User with the same email already exist!" });
+          .json({ error: "User with the same email already exist!" });
         return;
       }
 
