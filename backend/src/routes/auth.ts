@@ -110,7 +110,7 @@ authRouter.post("/tokenIsValid", async (req, res) => {
 authRouter.get("/", auth, async (req: AuthRequest, res) => {
   try {
     if (!req.user) {
-      res.status(401).json({ msg: "Token verification failed!" });
+      res.status(401).json({ error: "Token verification failed!" });
       return;
     }
     const [user] = await db.select().from(users).where(eq(users.id, req.user));
