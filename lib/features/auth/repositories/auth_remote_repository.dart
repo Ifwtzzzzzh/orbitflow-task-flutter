@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 import 'package:orbitflow/core/constants/constants.dart';
+import 'package:orbitflow/core/services/sp_service.dart';
 import 'package:orbitflow/models/user_model.dart';
 
 class AuthRemoteRepository {
+  final spService = SpService();
+
   Future<UserModel> signUp({
     required String name,
     required String email,
@@ -52,6 +55,41 @@ class AuthRemoteRepository {
       return UserModel.fromJson(res.body);
     } catch (e) {
       throw e.toString();
+    }
+  }
+
+  Future<UserModel?> getUserData() async {
+    try {
+      final token = await spService.getToken();
+      if (token == null) {
+        return null;
+      }
+      final res = await http.post(
+        Uri.parse('${Constants.backendUri}/auth/tokenIsValid'),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token,
+        },
+      );
+
+      if (res.statusCode != 200) {
+        return null;
+      }
+
+      final userResponse = await http.get(
+        Uri.parse('${Constants.backendUri}/auth'),
+        headers: {
+          'Content-Type': 'application/json',
+          'x-auth-token': token,
+        },
+      );
+
+      if (userResponse.statusCode != 200) {
+        throw jsonDecode(userResponse.body)['error'];
+      }
+      return UserModel.fromJson(res.body);
+    } catch (e) {
+      return null;
     }
   }
 }
