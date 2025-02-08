@@ -72,7 +72,7 @@ class AuthRemoteRepository {
         },
       );
 
-      if (res.statusCode != 200) {
+      if (res.statusCode != 200 || jsonDecode(res.body) == false) {
         return null;
       }
 
@@ -87,7 +87,7 @@ class AuthRemoteRepository {
       if (userResponse.statusCode != 200) {
         throw jsonDecode(userResponse.body)['error'];
       }
-      return UserModel.fromJson(res.body);
+      return UserModel.fromJson(userResponse.body);
     } catch (e) {
       return null;
     }
