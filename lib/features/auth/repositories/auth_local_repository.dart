@@ -25,7 +25,7 @@ class AuthLocalRepository {
           token TEXT NOT NULL,
           name TEXT NOT NULL,
           createdAt int NOT NULL,
-          updatedAt int NOT NULL,
+          updatedAt int NOT NULL
         )
         ''');
     });

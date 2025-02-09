@@ -3,10 +3,12 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:orbitflow/core/constants/constants.dart';
 import 'package:orbitflow/core/services/sp_service.dart';
+import 'package:orbitflow/features/auth/repositories/auth_local_repository.dart';
 import 'package:orbitflow/models/user_model.dart';
 
 class AuthRemoteRepository {
   final spService = SpService();
+  final authLocalRepository = AuthLocalRepository();
 
   Future<UserModel> signUp({
     required String name,
@@ -89,7 +91,8 @@ class AuthRemoteRepository {
       }
       return UserModel.fromJson(userResponse.body);
     } catch (e) {
-      return null;
+      final user = await authLocalRepository.getUser();
+      return user;
     }
   }
 }
