@@ -24,7 +24,17 @@ taskRouter.get("/", auth, async (req: AuthRequest, res) => {
       .select()
       .from(tasks)
       .where(eq(tasks.uid, req.user!));
-    res.status(201).json(allTasks);
+    res.json(allTasks);
+  } catch (e) {
+    res.status(500).json({ error: e });
+  }
+});
+
+taskRouter.delete("/", auth, async (req: AuthRequest, res) => {
+  try {
+    const { taskId }: { taskId: string } = req.body;
+    await db.delete(tasks).where(eq(tasks.id, taskId));
+    res.json(true);
   } catch (e) {
     res.status(500).json({ error: e });
   }
