@@ -1,13 +1,17 @@
 import 'dart:convert';
+import 'dart:ui';
+import 'package:orbitflow/core/constants/utils.dart';
 
 class TaskModel {
   final String id;
   final String uid;
   final String title;
+  final Color color;
   final String description;
   final DateTime createdAt;
   final DateTime updatedAt;
   final DateTime dueAt;
+  final int isSynced;
   TaskModel({
     required this.id,
     required this.uid,
@@ -16,6 +20,8 @@ class TaskModel {
     required this.createdAt,
     required this.updatedAt,
     required this.dueAt,
+    required this.color,
+    required this.isSynced,
   });
 
   TaskModel copyWith({
@@ -26,6 +32,8 @@ class TaskModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     DateTime? dueAt,
+    Color? color,
+    int? isSynced,
   }) {
     return TaskModel(
       id: id ?? this.id,
@@ -35,21 +43,23 @@ class TaskModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       dueAt: dueAt ?? this.dueAt,
+      color: color ?? this.color,
+      isSynced: isSynced ?? this.isSynced,
     );
   }
 
   Map<String, dynamic> toMap() {
-    final result = <String, dynamic>{};
-
-    result.addAll({'id': id});
-    result.addAll({'uid': uid});
-    result.addAll({'title': title});
-    result.addAll({'description': description});
-    result.addAll({'createdAt': createdAt.millisecondsSinceEpoch});
-    result.addAll({'updatedAt': updatedAt.millisecondsSinceEpoch});
-    result.addAll({'dueAt': dueAt.millisecondsSinceEpoch});
-
-    return result;
+    return <String, dynamic>{
+      'id': id,
+      'uid': uid,
+      'title': title,
+      'description': description,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+      'dueAt': dueAt.toIso8601String(),
+      'hexColor': rgbToHex(color),
+      'isSynced': isSynced,
+    };
   }
 
   factory TaskModel.fromMap(Map<String, dynamic> map) {
@@ -61,31 +71,34 @@ class TaskModel {
       createdAt: DateTime.parse(map['createdAt']),
       updatedAt: DateTime.parse(map['updatedAt']),
       dueAt: DateTime.parse(map['dueAt']),
+      color: hexToRgb(map['hexColor']),
+      isSynced: map['isSynced'] ?? 1,
     );
   }
 
   String toJson() => json.encode(toMap());
 
   factory TaskModel.fromJson(String source) =>
-      TaskModel.fromMap(json.decode(source));
+      TaskModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
-    return 'TaskModel(id: $id, uid: $uid, title: $title, description: $description, createdAt: $createdAt, updatedAt: $updatedAt, dueAt: $dueAt)';
+    return 'TaskModel(id: $id, uid: $uid, title: $title, description: $description, createdAt: $createdAt, updatedAt: $updatedAt, dueAt: $dueAt, color: $color)';
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant TaskModel other) {
     if (identical(this, other)) return true;
 
-    return other is TaskModel &&
-        other.id == id &&
+    return other.id == id &&
         other.uid == uid &&
         other.title == title &&
         other.description == description &&
         other.createdAt == createdAt &&
         other.updatedAt == updatedAt &&
-        other.dueAt == dueAt;
+        other.dueAt == dueAt &&
+        other.color == color &&
+        other.isSynced == isSynced;
   }
 
   @override
@@ -96,6 +109,8 @@ class TaskModel {
         description.hashCode ^
         createdAt.hashCode ^
         updatedAt.hashCode ^
-        dueAt.hashCode;
+        dueAt.hashCode ^
+        color.hashCode ^
+        isSynced.hashCode;
   }
 }
