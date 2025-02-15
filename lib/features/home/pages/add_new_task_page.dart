@@ -2,6 +2,7 @@ import 'package:flex_color_picker/flex_color_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:orbitflow/features/auth/cubit/auth_cubit.dart';
 import 'package:orbitflow/features/home/cubit/add_new_task_cubit.dart';
 
 class AddNewTaskPage extends StatefulWidget {
@@ -23,14 +24,22 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
 
   void createNewTask() async {
     if (formKey.currentState!.validate()) {
-      // context.read<AddNewTaskCubit>().createNewTask(
-      //       title: titleController.text.trim(),
-      //       description: descriptionController.text.trim(),
-      //       color: selectedColor,
-      //       token: token,
-      //       dueAt: selectedDate,
-      //     );
+      AuthLoggedIn user = context.read<AuthCubit>().state as AuthLoggedIn;
+      await context.read<AddNewTaskCubit>().createNewTask(
+            title: titleController.text.trim(),
+            description: descriptionController.text.trim(),
+            color: selectedColor,
+            token: user.user.token,
+            dueAt: selectedDate,
+          );
     }
+  }
+
+  @override
+  void dispose() {
+    titleController.dispose();
+    descriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -63,62 +72,87 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
           ),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: titleController,
-                decoration: const InputDecoration(hintText: 'Title'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Title can't be empty";
-                  }
-                  return null;
-                },
+      body: BlocConsumer<AddNewTaskCubit, AddNewTaskState>(
+        listener: (context, state) {
+          if (state is AddNewTaskError) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(state.error),
               ),
-              const SizedBox(height: 10),
-              TextFormField(
-                controller: descriptionController,
-                decoration: const InputDecoration(hintText: 'Description'),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return "Description can't be empty";
-                  }
-                  return null;
-                },
-                maxLines: 4,
+            );
+          } else if (state is AddNewTaskSuccess) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text("Task added succesfully"),
               ),
-              const SizedBox(height: 10),
-              ColorPicker(
-                heading: const Text('Select color'),
-                subheading: const Text('Select a different shade'),
-                onColorChanged: (Color color) {
-                  setState(() {
-                    selectedColor = color;
-                  });
-                },
-                color: selectedColor,
-                pickersEnabled: const {
-                  ColorPickerType.wheel: true,
-                },
-              ),
-              const SizedBox(height: 10),
-              ElevatedButton(
-                onPressed: () {},
-                child: const Text(
-                  'SUBMIT',
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
+            );
+            Navigator.pop(context);
+          }
+        },
+        builder: (context, state) {
+          if (state is AddNewTaskLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return Padding(
+            padding: const EdgeInsets.all(20),
+            child: Form(
+              key: formKey,
+              child: Column(
+                children: [
+                  TextFormField(
+                    controller: titleController,
+                    decoration: const InputDecoration(hintText: 'Title'),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Title can't be empty";
+                      }
+                      return null;
+                    },
                   ),
-                ),
+                  const SizedBox(height: 10),
+                  TextFormField(
+                    controller: descriptionController,
+                    decoration: const InputDecoration(hintText: 'Description'),
+                    validator: (value) {
+                      if (value == null || value.trim().isEmpty) {
+                        return "Description can't be empty";
+                      }
+                      return null;
+                    },
+                    maxLines: 4,
+                  ),
+                  const SizedBox(height: 10),
+                  ColorPicker(
+                    heading: const Text('Select color'),
+                    subheading: const Text('Select a different shade'),
+                    onColorChanged: (Color color) {
+                      setState(() {
+                        selectedColor = color;
+                      });
+                    },
+                    color: selectedColor,
+                    pickersEnabled: const {
+                      ColorPickerType.wheel: true,
+                    },
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: createNewTask,
+                    child: const Text(
+                      'SUBMIT',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
