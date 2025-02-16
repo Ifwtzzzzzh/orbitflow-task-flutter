@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:orbitflow/features/auth/cubit/auth_cubit.dart';
 import 'package:orbitflow/features/home/cubit/tasks_cubit.dart';
+import 'package:orbitflow/features/home/pages/home_page.dart';
 
 class AddNewTaskPage extends StatefulWidget {
   static MaterialPageRoute route() => MaterialPageRoute(
@@ -86,7 +87,8 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
                 content: Text("Task added succesfully"),
               ),
             );
-            Navigator.pop(context);
+            Navigator.pushAndRemoveUntil(
+                context, HomePage.route(), (_) => false);
           }
         },
         builder: (context, state) {

@@ -3,7 +3,13 @@ import 'package:intl/intl.dart';
 import 'package:orbitflow/core/constants/utils.dart';
 
 class DateSelector extends StatefulWidget {
-  const DateSelector({super.key});
+  final DateTime selectedDate;
+  final Function(DateTime) onTap;
+  const DateSelector({
+    super.key,
+    required this.selectedDate,
+    required this.onTap,
+  });
 
   @override
   State<DateSelector> createState() => _DateSelectorState();
@@ -11,7 +17,6 @@ class DateSelector extends StatefulWidget {
 
 class _DateSelectorState extends State<DateSelector> {
   int weekOffset = 0;
-  DateTime selectedDate = DateTime.now();
 
   @override
   Widget build(BuildContext context) {
@@ -62,15 +67,13 @@ class _DateSelectorState extends State<DateSelector> {
                 itemCount: weekDates.length,
                 itemBuilder: (context, index) {
                   final date = weekDates[index];
-                  bool isSelected = DateFormat('d').format(selectedDate) ==
-                          DateFormat('d').format(date) &&
-                      selectedDate.month == date.month &&
-                      selectedDate.year == date.year;
-
+                  bool isSelected =
+                      DateFormat('d').format(widget.selectedDate) ==
+                              DateFormat('d').format(date) &&
+                          widget.selectedDate.month == date.month &&
+                          widget.selectedDate.year == date.year;
                   return GestureDetector(
-                    onTap: () {
-                      selectedDate = date;
-                    },
+                    onTap: () => widget.onTap(date),
                     child: Container(
                       width: 70,
                       margin: const EdgeInsets.only(right: 8),

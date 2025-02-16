@@ -20,6 +20,8 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  DateTime selectedDate = DateTime.now();
+
   @override
   void initState() {
     super.initState();
@@ -52,45 +54,61 @@ class _HomePageState extends State<HomePage> {
             return Center(child: Text(state.error));
           }
           if (state is GetTasksSuccess) {
-            final tasks = state.tasks;
+            final tasks = state.tasks
+                .where(
+                  (elem) =>
+                      DateFormat('d').format(elem.dueAt) ==
+                          DateFormat('d').format(selectedDate) &&
+                      selectedDate.month == elem.dueAt.month &&
+                      selectedDate.year == elem.dueAt.year,
+                )
+                .toList();
             return Column(
               children: [
-                const DateSelector(),
+                DateSelector(
+                  selectedDate: selectedDate,
+                  onTap: (date) {
+                    setState(() {
+                      selectedDate = date;
+                    });
+                  },
+                ),
                 Expanded(
                   child: ListView.builder(
-                      itemCount: tasks.length,
-                      itemBuilder: (context, index) {
-                        final task = tasks[index];
-                        return Row(
-                          children: [
-                            Expanded(
-                              child: TaskCard(
-                                color: task.color,
-                                headerText: task.title,
-                                descriptionText: task.description,
-                              ),
+                    itemCount: tasks.length,
+                    itemBuilder: (context, index) {
+                      final task = tasks[index];
+                      return Row(
+                        children: [
+                          Expanded(
+                            child: TaskCard(
+                              color: task.color,
+                              headerText: task.title,
+                              descriptionText: task.description,
                             ),
-                            Container(
-                              height: 10,
-                              width: 10,
-                              decoration: BoxDecoration(
-                                color: strengthenColor(
-                                  task.color,
-                                  0.69,
-                                ),
-                                shape: BoxShape.circle,
+                          ),
+                          Container(
+                            height: 10,
+                            width: 10,
+                            decoration: BoxDecoration(
+                              color: strengthenColor(
+                                task.color,
+                                0.69,
                               ),
+                              shape: BoxShape.circle,
                             ),
-                            Padding(
-                              padding: const EdgeInsets.all(12),
-                              child: Text(
-                                DateFormat.jm().format(task.dueAt),
-                                style: const TextStyle(fontSize: 17),
-                              ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(12),
+                            child: Text(
+                              DateFormat.jm().format(task.dueAt),
+                              style: const TextStyle(fontSize: 17),
                             ),
-                          ],
-                        );
-                      }),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
               ],
             );
