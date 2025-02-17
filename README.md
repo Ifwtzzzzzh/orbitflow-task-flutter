@@ -1,16 +1,40 @@
-# orbitflow
+# 📒 OrbitFlow - Task App
 
-A new Flutter project.
+Keep your tasks effortlessly in orbit with OrbitFlow, the intuitive app that transforms task management into a seamless experience. Prioritize, organize, and conquer your to-dos with a tool designed to keep you on track and in control. OrbitFlow helps you maintain focus and momentum, ensuring that nothing slips through the cracks. Whether it’s daily errands or long-term projects, OrbitFlow keeps you in the rhythm of productivity without breaking your stride.
 
-## Getting Started
+# Tech Stack **👩‍💻**
 
-This project is a starting point for a Flutter application.
+- Flutter (Framework)
+- Dart (Language)
+- ExpressJS (Framework)
+- TypeScript (Language)
+- Docker (Tools)
+- MongoDB (Database)
 
-A few resources to get you started if this is your first Flutter project:
+# Package 📦
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Flutter
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- google_fonts
+- web_socket_client
+- flutter_markdown
+- skeletonizer
+- http
+- flutter_bloc
+- shared_preferences
+- sqflite
+- path
+- intl
+- flex_color_picker
+- uuid
+- connectivity_plus
+
+NodeJS
+
+- express
+- pg
+- drizzle-orm
+- drizzle-kit
+- typescript
+- bcryptjs
+- jsonwebtoken
