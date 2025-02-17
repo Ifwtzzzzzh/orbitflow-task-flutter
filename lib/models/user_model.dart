@@ -35,16 +35,14 @@ class UserModel {
   }
 
   Map<String, dynamic> toMap() {
-    final result = <String, dynamic>{};
-
-    result.addAll({'id': id});
-    result.addAll({'email': email});
-    result.addAll({'name': name});
-    result.addAll({'token': token});
-    result.addAll({'createdAt': createdAt.millisecondsSinceEpoch});
-    result.addAll({'updatedAt': updatedAt.millisecondsSinceEpoch});
-
-    return result;
+    return <String, dynamic>{
+      'id': id,
+      'email': email,
+      'name': name,
+      'token': token,
+      'createdAt': createdAt.toIso8601String(),
+      'updatedAt': updatedAt.toIso8601String(),
+    };
   }
 
   factory UserModel.fromMap(Map<String, dynamic> map) {
@@ -61,7 +59,7 @@ class UserModel {
   String toJson() => json.encode(toMap());
 
   factory UserModel.fromJson(String source) =>
-      UserModel.fromMap(json.decode(source));
+      UserModel.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   String toString() {
@@ -69,11 +67,10 @@ class UserModel {
   }
 
   @override
-  bool operator ==(Object other) {
+  bool operator ==(covariant UserModel other) {
     if (identical(this, other)) return true;
 
-    return other is UserModel &&
-        other.id == id &&
+    return other.id == id &&
         other.email == email &&
         other.name == name &&
         other.token == token &&

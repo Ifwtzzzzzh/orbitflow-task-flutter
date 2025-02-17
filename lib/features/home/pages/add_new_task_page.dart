@@ -27,6 +27,7 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
     if (formKey.currentState!.validate()) {
       AuthLoggedIn user = context.read<AuthCubit>().state as AuthLoggedIn;
       await context.read<TasksCubit>().createNewTask(
+            uid: user.user.id,
             title: titleController.text.trim(),
             description: descriptionController.text.trim(),
             color: selectedColor,
@@ -47,7 +48,7 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Add New Task"),
+        title: const Text('Add New Task'),
         actions: [
           GestureDetector(
             onTap: () async {
@@ -58,6 +59,7 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
                   const Duration(days: 90),
                 ),
               );
+
               if (_selectedDate != null) {
                 setState(() {
                   selectedDate = _selectedDate;
@@ -70,22 +72,18 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
                 DateFormat("MM-d-y").format(selectedDate),
               ),
             ),
-          ),
+          )
         ],
       ),
       body: BlocConsumer<TasksCubit, TasksState>(
         listener: (context, state) {
           if (state is TasksError) {
             ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(state.error),
-              ),
+              SnackBar(content: Text(state.error)),
             );
           } else if (state is AddNewTaskSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("Task added succesfully"),
-              ),
+              const SnackBar(content: Text("Task added successfully!")),
             );
             Navigator.pushAndRemoveUntil(
                 context, HomePage.route(), (_) => false);
@@ -97,18 +95,21 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
               child: CircularProgressIndicator(),
             );
           }
+
           return Padding(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.all(20.0),
             child: Form(
               key: formKey,
               child: Column(
                 children: [
                   TextFormField(
                     controller: titleController,
-                    decoration: const InputDecoration(hintText: 'Title'),
+                    decoration: const InputDecoration(
+                      hintText: 'Title',
+                    ),
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return "Title can't be empty";
+                        return "Title cannot be empty";
                       }
                       return null;
                     },
@@ -116,14 +117,16 @@ class _AddNewTaskPageState extends State<AddNewTaskPage> {
                   const SizedBox(height: 10),
                   TextFormField(
                     controller: descriptionController,
-                    decoration: const InputDecoration(hintText: 'Description'),
+                    decoration: const InputDecoration(
+                      hintText: 'Description',
+                    ),
+                    maxLines: 4,
                     validator: (value) {
                       if (value == null || value.trim().isEmpty) {
-                        return "Description can't be empty";
+                        return "Description cannot be empty";
                       }
                       return null;
                     },
-                    maxLines: 4,
                   ),
                   const SizedBox(height: 10),
                   ColorPicker(
